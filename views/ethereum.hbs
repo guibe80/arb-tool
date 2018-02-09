@@ -1,0 +1,25 @@
+<script src="/javascripts/sorttable.js"></script>
+<script>
+  /* This scrypt section is required to get the id of the table after loaded
+     this way is possible to get the id from the table imported by node.js/request
+  */
+  // List of global variables
+  var parentElementMainTable = null;
+  var addOrderBtn = null
+
+  // Equivalent to <body onload="yourFunction();">
+  window.onload = function(){
+      // Init globals
+      parentElementMainTable = document.getElementById('markets-table');
+      sorttable.makeSortable(parentElementMainTable);
+  }
+</script>
+
+<div class="w3-container w3-teal">
+  <h1> Data from Ethereum (ETH) </h1>
+</div>
+
+<div class="w3-container">
+<p>
+  {{{ data }}}
+</p>

@@ -7,13 +7,18 @@
   <link rel="stylesheet" href="/stylesheets/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
+<script>
+  var pjson = require('/package.json');
+  var version = pjson.version;
+  console.log(pjson.version);
+</script>
 <body>
 
   <div class="w3-sidebar w3-bar-block w3-orange w3-xxlarge" style="width:70px">
     <a href="/" class="w3-bar-item w3-button w3-hover-text-white"><i class="fa fa-home"></i></a>
     <a href="/users" class="w3-bar-item w3-button w3-hover-text-white"><i class="fa fa-search"></i></a>
     <a href="/scrape" class="w3-bar-item w3-button w3-hover-text-white"><i class="fa fa-envelope"></i></a>
-    <a href="#" class="w3-bar-item w3-button w3-hover-text-white"><i class="fa fa-globe"></i></a>
+    <a href="/ethereum" class="w3-bar-item w3-button w3-hover-text-white"><i class="fa fa-globe"></i></a>
     <a href="#" class="w3-bar-item w3-button w3-hover-text-white"><i class="fa fa-trash"></i></a>
   </div>
 
@@ -26,8 +31,9 @@
 
 </body>
 
+
 <div class="footer w3-container w3-lime">
-  <p> Arbitrage tool version {{ version }}</p>
+  <p> Arbitrage tool version <script type="text/javascript">document.write(version)</script></p>
 </div>
 
 </html>
