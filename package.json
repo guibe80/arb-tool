@@ -1,0 +1,22 @@
+{
+  "name": "arbitrage-tool",
+  "version": "0.0.1",
+  "description": "Arbitrage analysis tool for crypto",
+  "author": "Mario G. Bejarano M.",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "body-parser": "~1.18.2",
+    "cheerio": "latest",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.9",
+    "express": "~4.15.5",
+    "express-handlebars": "^3.0.0",
+    "fs": "latest",
+    "morgan": "~1.9.0",
+    "request": "latest",
+    "serve-favicon": "~2.4.5"
+  }
+}
