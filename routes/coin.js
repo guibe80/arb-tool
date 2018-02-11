@@ -6,9 +6,16 @@ var request     = require('request');
 var router      = express.Router();
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
+router.get('/', function(req, res, next){
+  res.redirect('/arbitrage');
+})
+
+
+router.get('/:id', function(req, res, next) {
   /*  res.send('respond with a resource'); */
-  coin = 'bitcoin';
+  // coin = req.param('id');
+  coin = req.params.id;
+  console.log(coin);
   url = 'https://coinmarketcap.com/currencies/' + coin + '/';
   request(url, function(error, response, html){
 
@@ -26,7 +33,7 @@ router.get('/', function(req, res, next) {
        var data = error;
      }
 
-     res.render('ethereum', { title : coin, data : tbl});
+     res.render('coin', { title : coin, data : tbl});
   });
 });
 module.exports = router;

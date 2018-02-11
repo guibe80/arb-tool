@@ -5,11 +5,14 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var hbs = require('express-handlebars');
+var expressValidator = require('express-validator');
+var expressSession = require('express-session');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
 var scrape = require('./routes/scrape');
 var ethereum = require('./routes/ethereum');
+var coin = require('./routes/coin');
 
 var app = express();
 
@@ -23,6 +26,8 @@ app.set('view engine', 'hbs');
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(expressValidator());
+app.use(expressSession({secret: 'max', saveUninitialized: false, resave: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -30,6 +35,7 @@ app.use('/', index);
 app.use('/users', users);
 app.use('/scrape', scrape);
 app.use('/ethereum', ethereum);
+app.use('/coin', coin);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
