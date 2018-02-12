@@ -8,11 +8,18 @@ var hbs = require('express-handlebars');
 var expressValidator = require('express-validator');
 var expressSession = require('express-session');
 
+
 var index = require('./routes/index');
 var users = require('./routes/users');
 var scrape = require('./routes/scrape');
 var ethereum = require('./routes/ethereum');
 var coin = require('./routes/coin');
+
+var myGlobal = function(){
+  var pjson = require('./package.json');
+  console.log("Running " + pjson.name + " version: "+ pjson.version)
+  return pjson.version;
+};
 
 var app = express();
 
@@ -20,6 +27,7 @@ var app = express();
 app.engine('hbs', hbs({extname: 'hbs', defaultLayout: 'layout', layoutsDir: __dirname + '/views/layouts/'}));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
+app.locals.version = myGlobal();
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));

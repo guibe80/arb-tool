@@ -18,11 +18,6 @@
 html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
 </style>
 
-<script>
-  var pjson = require('/package.json');
-  var version = pjson.version;
-  console.log(pjson.version);
-</script>
 
 <body class="w3-light-grey">
 
@@ -51,7 +46,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
   </div>
   <div class="w3-bar-block">
     <a href="#" class="w3-bar-item w3-button w3-padding-16 w3-hide-large w3-dark-grey w3-hover-black" onclick="w3_close()" title="close menu"><i class="fa fa-remove fa-fw"></i>  Close Menu</a>
-    <a href="/" class="w3-bar-item w3-button w3-padding w3-blue"><i class="fa fa-users fa-fw"></i>  Overview</a>
+    <a href="/" class="w3-bar-item w3-button w3-padding"><i class="fa fa-users fa-fw"></i>  Overview</a>
     <a href="/users" class="w3-bar-item w3-button w3-padding"><i class="fa fa-eye fa-fw"></i>  Views</a>
     <a href="/scrape" class="w3-bar-item w3-button w3-padding"><i class="fa fa-users fa-fw"></i>  Traffic</a>
     <a href="/ethereum" class="w3-bar-item w3-button w3-padding"><i class="fa fa-bitcoin fa-fw"></i>  Bitcoin</a>
@@ -75,11 +70,49 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
 </body>
 
 <!-- Footer -->
- <footer class="w3-container w3-padding-16 w3-dark-grey">
-   <p>Arbitrage tool version <script type="text/javascript">document.write(version)</script></p>
+ <footer class="w3-container w3-padding-16 w3-dark-grey w3-right-align">
+   <p>Arbitrage tool version {{ version }}</p>
  </footer>
 </div>
  {{!-- This div is an orfan one as closes the data rendered from the other pages --}}
+
+
+ {{!-- <script>
+
+ window.onload = function(){
+   // Change the colour of the sidebar when a link is pressed
+   // Add active class to the current button (highlight it)
+   var header = document.getElementById("mySidebar");
+   var btns = header.getElementsByClassName("w3-button");
+   for (var i = 0; i < btns.length; i++) {
+     btns[i].addEventListener("click", function() {
+       var current = document.getElementsByClassName("w3-blue");
+       current[0].className = current[0].className.replace(" w3-blue", "");
+       this.className += " w3-blue";
+     });
+   }
+ }
+ </script> --}}
+
+
+ <script type="text/javascript">
+
+    var path = window.location.pathname;
+    // path = path.replace(/\/$/, "");
+    path = decodeURIComponent(path);
+
+    var header = document.getElementById("mySidebar");
+    var btns = header.getElementsByClassName("w3-button");
+
+    for (var i = 0; i < btns.length; i++) {
+      var href = btns[i].getAttribute('href');
+      href = decodeURIComponent(href)
+      if (path === href) {
+        btns[i].className += " w3-blue";
+      };
+    };
+
+ </script>
 
 <script>
 // Get the Sidebar
