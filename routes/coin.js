@@ -22,6 +22,7 @@ router.get('/:id', function(req, res, next) {
     if(!error){
       var $ = cheerio.load(html);
       var $ = $('#markets-table').parent().html();
+
 //      debugger;
 //      console.log($);
       var tbl = $;

@@ -1,18 +1,29 @@
-<script src="/javascripts/sorttable.js"></script>
+<script type="text/javascript" src="/javascripts/sorttable.js"></script>
+<script type="text/javascript" src="/javascripts/jquery.min.js"></script>
+<script type="text/javascript" src="/javascripts/jquery-ui.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/3.3.3/css/tabulator.min.css" rel="stylesheet">
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tabulator/3.3.3/js/tabulator.min.js"></script>
+
 <script>
   /* This scrypt section is required to get the id of the table after loaded
-     this way is possible to get the id from the table imported by node.js/request
-  */
+       this way is possible to get the id from the table imported by node.js/request
+    */
   // List of global variables
   var parentElementMainTable = null;
   var addOrderBtn = null
 
   // Equivalent to <body onload="yourFunction();">
-  window.onload = function(){
-      // Init globals
-      parentElementMainTable = document.getElementById('markets-table');
-      sorttable.makeSortable(parentElementMainTable);
+  window.onload = function() {
+    // Init globals
+
+    parentElementMainTable = document.getElementById('markets-table');
+    sorttable.makeSortable(parentElementMainTable);
   }
+
+  $(document).ready(function(){
+       // $("#data-table").tabulator({});
+  })
+
 </script>
 
 <div class="w3-container">
@@ -20,6 +31,8 @@
 </div>
 
 <div class="w3-container">
-<p>
-  {{{ data }}}
-</p>
+  <p>
+    <div id="data-table">
+      {{{ data }}}
+    </div>
+  </p>
