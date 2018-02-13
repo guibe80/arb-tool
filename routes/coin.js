@@ -1,40 +1,49 @@
-var express     = require('express');
-var fs          = require('fs');
-var cheerio     = require('cheerio');
-var cheerioTbl  = require('cheerio-tableparser');
-var request     = require('request');
-var router      = express.Router();
+var express = require('express')
+var cheerio = require('cheerio')
+var request = require('request')
+var router = express.Router()
+var tabletojson = require('tabletojson')
+var d3 = require('d3')
 
 /* GET users listing. */
-router.get('/', function(req, res, next){
-  res.redirect('/arbitrage');
+router.get('/', function (req, res, next) {
+  res.redirect('/arbitrage')
 })
 
-
-router.get('/:id', function(req, res, next) {
+router.get('/:id', function (req, res, next) {
   /*  res.send('respond with a resource'); */
   // coin = req.param('id');
-  coin = req.params.id;
-  console.log(coin);
-  url = 'https://coinmarketcap.com/currencies/' + coin + '/';
-  request(url, function(error, response, html){
+  var coin = req.params.id
+  console.log(coin)
+  var url = 'https://coinmarketcap.com/currencies/' + coin + '/'
+  request(url, function (error, response, html) {
+    if (!error) {
+      /* Extract data from HTML, convert to JSON and group by Pair */
+      var $ = cheerio.load(html)
+      var htmlData = $('#markets-table').parent().html()
+      // console.log(htmlData)
+      var jsonMarket = tabletojson.convert(htmlData)[0]
+      var marketByPair = d3.nest()
+        .key(function (d) {
+          return d.Pair
+        })
+        .entries(jsonMarket)
+      // console.log(JSON.stringify(marketByPair[0].values))
+      // console.log(tableasjson);
+      //      debugger;
+      //      console.log($);
+    } else {
+      console.log('error:', error) // Print the error if one occurred
+      console.log('statusCode:', response && response.statusCode) // Print the response status code if a response was received
+      // console.log('body:', body) // Print the HTML for the Google homepage.
+      var coin = error
+    }
 
-    if(!error){
-      var $ = cheerio.load(html);
-      var $ = $('#markets-table').parent().html();
-
-//      debugger;
-//      console.log($);
-      var tbl = $;
-     }
-     else{
-       console.log('error:', error); // Print the error if one occurred
-       console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-       console.log('body:', body); // Print the HTML for the Google homepage.
-       var data = error;
-     }
-
-     res.render('coin', { title : coin, data : tbl});
-  });
-});
-module.exports = router;
+    res.render('ethereum', {
+      title: coin,
+      data: htmlData,
+      jsontbl: JSON.stringify(marketByPair)
+    })
+  })
+})
+module.exports = router

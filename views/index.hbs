@@ -1,13 +1,17 @@
 <div class="w3-container">
-  <h5>Welcome to {{ title }} </h5>
+  <h2>Welcome to {{ title }} </h2>
 </div>
 
 
 <div class="w3-container">
 
 {{# if success }}
-  <section class="success">
-      <h2>Successful Validation!</h2>
+  <!-- <section class="success"> -->
+  	<div class = "w3-panel w3-green w3-display-container"> 
+  		<span onclick="this.parentElement.style.display='none'" class="w3-button w3-large w3-display-topright">&times;</span>
+  		<h3 class="w3-opacity">Successful Validation!</h3>
+  		<p>You can access the website now.</p>
+  	</div>	
       <div class="w3-container">
       <p> Please select one of the following actions: </p>
       <div class="w3-dropdown-hover">
@@ -21,13 +25,12 @@
           <a href="/coin?id=cardano" class="w3-bar-item w3-button">Cardano</a>
         </div>
       </div>
-  </section>
+  <!-- </section> -->
 {{ else }}
 
   {{# if errors }}
-    <div class="w3-panel w3-display-container">
-    <span onclick="this.parentElement.style.display='none'"
-    class="w3-button w3-display-topright">X</span>
+    <div class="w3-panel w3-red w3-display-container">
+    <span onclick="this.parentElement.style.display='none'" class="w3-button w3-large w3-display-topright">&times;</span>
     <h2>Errors</h2>
       <ul>
         {{# each errors }}

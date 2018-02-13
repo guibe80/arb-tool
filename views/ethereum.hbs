@@ -8,55 +8,95 @@
 
 <script>
   /* This scrypt section is required to get the id of the table after loaded
-         this way is possible to get the id from the table imported by node.js/request
-      */
+           this way is possible to get the id from the table imported by node.js/request
+        */
   // List of global variables
   var parentElementMainTable = null;
   var addOrderBtn = null
-
-  // Equivalent to <body onload="yourFunction();">
-  // window.onload = function() {
-  //   // Init globals
-  //   parentElementMainTable = document.getElementById('markets-table');
-  //   sorttable.makeSortable(parentElementMainTable);
-  //
-  // }
+  //load sample data into the table from JSON string
+  var marketData = {{{ jsontbl }}};
 </script>
 
-<div class="w3-container">
-  <h5>Market data for {{ title }} </h5>
-</div>
+{{!-- <div id="loader"></div> --}}
 
-<div class="w3-container">
-      <div id="example-table"></div>
-        <script type="text/javascript">
-        //create Tabulator on DOM element with id "example-table"
-        $("#example-table").tabulator({
-            height:"620px", // set height of table (optional)
-            layout:'fitColumns', //fit columns to width of table (optional)
-            movableRows:true,
-            // groupBy:"Pair",
-            columns:[ //Define Table Columns
-                {title:"#", field:"#", sorter:"number", width:3},
-                {title:"Source", field:"Source", sorter:"string", align:"left"},
-                {title:"Pair", field:"Pair", sorter:"string"},
-                {title:"Volume (24h)", field:"Volume (24h)", sorter:"number"},
-                {title:"Price", field:"Price", sorter:"number"},
-                {title:"Volume (%)", field:"Volume (%)", sorter:"number"},
-                {title:"Updated", field:"Updated", sorter:"string", align:"center"},
-            ],
-            rowClick:function(e, id, data, row){ //trigger an alert message when the row is clicked
-                alert("Row " + id + " Clicked!!!!");
+<div class="w3-container animate-bottom">
+  <script type="text/javascript">
+    for (var i = 0; i < marketData.length; i++) {
+      if (marketData[i].values.length > 1) {
+        var tagtbl = "example-table" + i
+        document.write("<div class='w3-container' w3-padding-16> <h5>Market data for " + marketData[i].key + "</h5> </div>")
+        document.write("<div id=" + tagtbl + "></div>")
+        //create Tabulator on DOM element with id equivalent to tagtbl
+        $("#" + tagtbl).tabulator({
+          // height: "311px", // set height of table (optional)
+          layout: 'fitColumns', //fit columns to width of table (optional)
+          movableRows: true,
+          // groupBy:"Pair",
+          columns: [ //Define Table Columns
+            {
+              title: "#",
+              field: "#",
+              sorter: "number",
+              width: 3
             },
+            {
+              title: "Source",
+              field: "Source",
+              sorter: "string",
+              align: "left"
+            },
+            {
+              title: "Pair",
+              field: "Pair",
+              sorter: "string"
+            },
+            {
+              title: "Volume (24h)",
+              field: "Volume (24h)",
+              sorter: "number",
+              align:"right",
+              formatter:"money", formatterParams:{symbol:'$'}
+            },
+            {
+              title: "Price",
+              field: "Price",
+              sorter: "number",
+              align:"right",
+              formatter:"money", formatterParams:{symbol:'$'}
+            },
+            {
+              title: "Volume (%)",
+              field: "Volume (%)",
+              sorter: "number",
+              align:"right",
+              formatter:"money", formatterParams:{symbolAfter:'%'}
+            },
+            {
+              title: "Updated",
+              field: "Updated",
+              sorter: "string",
+              align: "center"
+            },
+          ],
+          rowClick: function(e, id, data, row) { //trigger an alert message when the row is clicked
+            alert("Row " + id + " Clicked!!!!");
+          },
         });
 
         //define some sample data
         // var tabledata = {{{ jsontbl }}};
 
-        //load sample data into the table
-        var marketData = {{{ jsontbl }}};
-        $("#example-table").tabulator("setData", marketData[0].values);
-        </script>
+
+        $("#" + tagtbl).tabulator("setData", marketData[i].values);
+      }
+    }
+
+    // $(window).load(function() { $('#loading').hide();
+
+  //    document.getElementById("loader").style.display = "none";
+     document.getElementById("myDiv").style.display = "block";
+
+  </script>
 </div>
 <br>
 <br>
