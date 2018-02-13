@@ -35,7 +35,7 @@
             height:"620px", // set height of table (optional)
             layout:'fitColumns', //fit columns to width of table (optional)
             movableRows:true,
-            groupBy:"Pair",
+            // groupBy:"Pair",
             columns:[ //Define Table Columns
                 {title:"#", field:"#", sorter:"number", width:3},
                 {title:"Source", field:"Source", sorter:"string", align:"left"},
@@ -54,7 +54,8 @@
         // var tabledata = {{{ jsontbl }}};
 
         //load sample data into the table
-        $("#example-table").tabulator("setData", {{{ jsontbl }}});
+        var marketData = {{{ jsontbl }}};
+        $("#example-table").tabulator("setData", marketData[0].values);
         </script>
 </div>
 <br>
