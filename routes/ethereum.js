@@ -9,7 +9,7 @@ var router = express.Router()
 /* GET users listing. */
 router.get('/', function (req, res, next) {
   /*  res.send('respond with a resource'); */
-  var coin = 'dogecoin'
+  var coin = 'litecoin'
   var url = 'https://coinmarketcap.com/currencies/' + coin + '/'
   request(url, function (error, response, html) {
     if (!error) {
@@ -23,7 +23,7 @@ router.get('/', function (req, res, next) {
         jsonMarket[i]['Volume (24h)'] = numeral(jsonMarket[i]['Volume (24h)'])._value
         jsonMarket[i]['Volume (%)'] = numeral(jsonMarket[i]['Volume (%)'])._value
         // debugger
-        console.log(jsonMarket[i].Price, jsonMarket[i]['Volume (24h)'], jsonMarket[i]['Volume (%)'])
+        // console.log(jsonMarket[i].Price, jsonMarket[i]['Volume (24h)'], jsonMarket[i]['Volume (%)'])
       }
       var marketByPair = d3.nest()
         .key(function (d) {

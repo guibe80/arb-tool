@@ -1,6 +1,7 @@
 var express = require('express')
 var cheerio = require('cheerio')
 var request = require('request')
+var numeral = require('numeral')
 var router = express.Router()
 var tabletojson = require('tabletojson')
 var d3 = require('d3')
@@ -23,6 +24,13 @@ router.get('/:id', function (req, res, next) {
       var htmlData = $('#markets-table').parent().html()
       // console.log(htmlData)
       var jsonMarket = tabletojson.convert(htmlData)[0]
+      for (var i = 0; i < jsonMarket.length; i++) {
+        jsonMarket[i].Price = numeral(jsonMarket[i].Price)._value
+        jsonMarket[i]['Volume (24h)'] = numeral(jsonMarket[i]['Volume (24h)'])._value
+        jsonMarket[i]['Volume (%)'] = numeral(jsonMarket[i]['Volume (%)'])._value
+        // debugger
+        console.log(jsonMarket[i].Price, jsonMarket[i]['Volume (24h)'], jsonMarket[i]['Volume (%)'])
+      }
       var marketByPair = d3.nest()
         .key(function (d) {
           return d.Pair

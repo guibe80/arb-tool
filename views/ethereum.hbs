@@ -15,6 +15,49 @@
   var addOrderBtn = null
   //load sample data into the table from JSON string
   var marketData = {{{ jsontbl }}};
+
+  Array.prototype.max = function() {
+    return Math.max.apply(null, this);
+  };
+
+  Array.prototype.min = function() {
+    return Math.min.apply(null, this);
+  };
+
+
+  //count number of users over 18
+  var diffArray = function(values, data, calcParams){
+    //values - array of column values
+    //data - all table data
+    //calcParams - params passed from the column defintion object
+    var maxVal = values.max();
+    var minVal = values.min();
+    return (((values.max()-values.min())/values.max())*100).toFixed(2) + "%";
+}
+
+/*Function to calculate max an mininmum of the array*/
+function getMinMax(array, col) {
+  let out = [];
+  let colVal = [];
+  debugger;
+
+  for (let i = 0; i < array.length; i++) {
+    out[i] = array[i][col];
+  }
+  return { min: Math.min.apply(null, out), max: Math.max.apply(null, out) };
+}
+
+Tabulator.extendExtension("format", "formatters", {
+    bold:function(cell, formatterParams){
+        return "<strong>" + cell.getValue() + "</strong>"; //make the contents of the cell bold
+    },
+    uppercase:function(cell, formatterParams){
+        return cell.getValue().toUpperCase(); //make the contents of the cell uppercase
+    },
+    percentage:function(cell, formatterParams){
+        return cell.getValue().toFixed(2) + "%";
+    }
+});
 </script>
 
 {{!-- <div id="loader"></div> --}}
@@ -23,19 +66,28 @@
   <script type="text/javascript">
     for (var i = 0; i < marketData.length; i++) {
       if (marketData[i].values.length > 1) {
+        if (marketData[i].values.length > 10){
+          var valheight = "300px"
+        } else {
+          var valheight = "100%"
+        }
         var tagtbl = "example-table" + i
-        document.write("<div class='w3-container' w3-padding-16> <h5>Market data for " + marketData[i].key + "</h5> </div>")
+        document.write("<div class='w3-container' w3-padding-16> <h5>Market data for " + marketData[i].key + "</h5></div>")
+        // document.write("<p id='card"+ i +"'> Text </p>");
         document.write("<div id=" + tagtbl + "></div>")
         //create Tabulator on DOM element with id equivalent to tagtbl
         $("#" + tagtbl).tabulator({
-          // height: "311px", // set height of table (optional)
+          height: valheight, // set height of table (optional)
           layout: 'fitColumns', //fit columns to width of table (optional)
-          movableRows: true,
-          // groupBy:"Pair",
+          placeholder:"No data available to display this table",
+          initialSort:[
+                      {column:"Price", dir:"desc"}, //sort by this first
+                      ],
           columns: [ //Define Table Columns
             {
-              title: "#",
-              field: "#",
+              title: "No.",
+              fietl: "No.",
+              formatter:"rownum",
               sorter: "number",
               width: 3
             },
@@ -43,59 +95,70 @@
               title: "Source",
               field: "Source",
               sorter: "string",
-              align: "left"
+              align: "left",
+              // formatter:"uppercase",
+              bottomCalc:"count"
             },
-            {
-              title: "Pair",
-              field: "Pair",
-              sorter: "string"
-            },
+            // {
+            //   title: "Pair",
+            //   field: "Pair",
+            //   sorter: "string"
+            // },
             {
               title: "Volume (24h)",
               field: "Volume (24h)",
               sorter: "number",
               align:"right",
-              formatter:"money", formatterParams:{symbol:'$'}
+              formatter:"money", formatterParams:{symbol:'$'},
+              headerFilter:"number", headerFilterPlaceholder:"at least...", headerFilterFunc:">=",
+              headerFilterParams:{initial:1}
             },
             {
               title: "Price",
               field: "Price",
               sorter: "number",
               align:"right",
-              formatter:"money", formatterParams:{symbol:'$'}
+              formatter:"money",
+              formatterParams:{symbol:'$'},
+              bottomCalc:diffArray,
+              // bottomCalcFormatter: "money",
+              // bottomCalcFormatterParams:{symbol:'$'},
+              headerFilter:"number", headerFilterPlaceholder:"at least...", headerFilterFunc:">="
             },
             {
               title: "Volume (%)",
               field: "Volume (%)",
               sorter: "number",
               align:"right",
-              formatter:"money", formatterParams:{symbolAfter:'%'}
+              // bottomCalc:diffArray,
+              formatter:"percentage",
+              // formatterParams: {symbolAfater:"%"}
+              // formatterParams: function (cell, formatterParams){
+              //   console.log(cell.getValue())
+              //   return cell.getValue() + "%"
+              // }
             },
             {
               title: "Updated",
               field: "Updated",
               sorter: "string",
-              align: "center"
+              align: "left",
+              headerFilter:"input"
             },
-          ],
-          rowClick: function(e, id, data, row) { //trigger an alert message when the row is clicked
-            alert("Row " + id + " Clicked!!!!");
-          },
+          ]
+          // rowClick: function(e, id, data, row) { //trigger an alert message when the row is clicked
+          //   alert("Row " + id + " Clicked!!!!");
+          // },
         });
 
-        //define some sample data
-        // var tabledata = {{{ jsontbl }}};
-
-
         $("#" + tagtbl).tabulator("setData", marketData[i].values);
+        document.write("<div class='w3-panel w3-padding-12'>");
+        document.write("<button class='w3-button w3-green w3-right'>Analyse "+marketData[i].key);
+        document.write(" <i class='fa fa-arrow-right' aria-hidden='true'></i></button>");
+        document.write("</div>");
+        // $("#card"+i) html("Data updated card"+i);
       }
     }
-
-    // $(window).load(function() { $('#loading').hide();
-
-  //    document.getElementById("loader").style.display = "none";
-     document.getElementById("myDiv").style.display = "block";
-
   </script>
 </div>
 <br>
