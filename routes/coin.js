@@ -5,6 +5,7 @@ var numeral = require('numeral')
 var router = express.Router()
 var tabletojson = require('tabletojson')
 var d3 = require('d3')
+var coinmarket = require('../lib/coinmarket.js')
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
@@ -54,4 +55,13 @@ router.get('/:id', function (req, res, next) {
     })
   })
 })
+
+router.get('/:coin/analyse/:id', function (req, res, next) {
+  var coin = req.params.coin
+  var id = req.params.id
+  console.log(coin + ' ' + id)
+  var tbl = coinmarket.coin(coin, 0)
+  console.log(tbl)
+})
+
 module.exports = router
