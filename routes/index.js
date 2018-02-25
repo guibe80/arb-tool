@@ -10,14 +10,15 @@ router.get('/', function (req, res, next) {
   })
   req.session.errors = null
   req.session.success = null
+  req.session.table = null
 })
 
 router.post('/submit', function (req, res, next) {
   // debugger
   req.check('email', 'Invalid email address').isEmail()
   req.check('password', 'Passwords must be at least 5 chars long and contain one number')
-     .isLength({min: 5})
-     .matches(/\d/).equals(req.body.confirmpassword)
+    .isLength({min: 5})
+    .matches(/\d/).equals(req.body.confirmpassword)
 
   var errors = req.validationErrors()
   if (errors) {
