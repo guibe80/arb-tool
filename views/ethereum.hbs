@@ -12,9 +12,9 @@
         */
   // List of global variables
   var parentElementMainTable = null;
-  var addOrderBtn = null
+  var addOrderBtn = null;
   //load sample data into the table from JSON string
-  var marketData = {{{ jsontbl }}};
+  var marketData = {{{ jsontbl }}}
 
   Array.prototype.max = function() {
     return Math.max.apply(null, this);
@@ -26,13 +26,13 @@
 
 
   //count number of users over 18
-  var diffArray = function(values, data, calcParams){
+var diffArray = function(values, data, calcParams){
     //values - array of column values
     //data - all table data
     //calcParams - params passed from the column defintion object
     var maxVal = values.max();
     var minVal = values.min();
-    return ((values.max()-values.min())/values.max()).toFixed(2) + "%";
+    return (((values.max()-values.min())/values.max())*100).toFixed(2) + "%";
 }
 
 /*Function to calculate max an mininmum of the array*/
@@ -56,6 +56,9 @@ Tabulator.extendExtension("format", "formatters", {
     },
     percentage:function(cell, formatterParams){
         return (cell.getValue()*100).toFixed(2) + "%";
+    },
+    percentageSymbol:function(cell, formatterParams){
+        return (cell.getValue()).toFixed(2) + "%";
     }
 });
 
@@ -68,15 +71,15 @@ function send(idem){
   // debugger
   $.ajax({
       type: 'POST',
-      url: '/analyse',
+      url: 'http://localhost:8000/getdata',
       data: JSON.stringify(table),
-      success: function(response){
-                        window.location.href = response.redirect;
-                    },
+      success: function(){
+            console.log("Edited");
+            window.location.href = 'http://localhost:8000/analyseit'},
       contentType: "application/json",
       dataType: 'json'
       });
-      window.location.href = "/analyse/data"
+      // window.location.href = "/analyseit"
   };
 
 </script>
@@ -84,99 +87,97 @@ function send(idem){
 {{!-- <div id="loader"></div> --}}
 
 <div class="w3-container animate-bottom">
-  <script type="text/javascript">
-    for (var i = 0; i < marketData.length; i++) {
-      if (marketData[i].values.length > 1) {
-        if (marketData[i].values.length > 10){
-          var valheight = "300px"
-        } else {
-          var valheight = "100%"
-        }
-        var tagtbl = "example-table" + i
-        document.write("<div class='w3-container' w3-padding-16> <h5>Market data for " + marketData[i].key + "</h5>")
-        // document.write("<p id='card"+ i +"'> Text </p>");
-        document.write("<div id=" + tagtbl + "></div>")
-        //create Tabulator on DOM element with id equivalent to tagtbl
-        $("#" + tagtbl).tabulator({
-          height: valheight, // set height of table (optional)
-          layout: 'fitColumns', //fit columns to width of table (optional)
-          placeholder:"No data available to display this table",
-          initialSort:[
-                      {column:"Price", dir:"desc"}, //sort by this first
-                      ],
-          columns: [ //Define Table Columns
-            {
-              title: "No.",
-              fietl: "No.",
-              formatter:"rownum",
-              sorter: "number",
-              width: 3
-            },
-            {
-              title: "Source",
-              field: "Source",
-              sorter: "string",
-              align: "left",
-              // formatter:"uppercase",
-              bottomCalc:"count"
-            },
-            // {
-            //   title: "Pair",
-            //   field: "Pair",
-            //   sorter: "string"
-            // },
-            {
-              title: "Volume (24h)",
-              field: "Volume (24h)",
-              sorter: "number",
-              align:"right",
-              formatter:"money", formatterParams:{symbol:'$'},
-              headerFilter:"number", headerFilterPlaceholder:"at least...", headerFilterFunc:">=",
-              headerFilterParams:{initial:1}
-            },
-            {
-              title: "Price",
-              field: "Price",
-              sorter: "number",
-              align:"right",
-              formatter:"money",
-              formatterParams:{symbol:'$'},
-              bottomCalc:diffArray,
-              // bottomCalcFormatter: "money",
-              // bottomCalcFormatterParams:{symbol:'$'},
-              headerFilter:"number", headerFilterPlaceholder:"at least...", headerFilterFunc:">="
-            },
-            {
-              title: "Volume (%)",
-              field: "Volume (%)",
-              sorter: "number",
-              align:"right",
-              // bottomCalc:diffArray,
-              formatter:"percentage",
-              // formatterParams: {symbolAfater:"%"}
-              // formatterParams: function (cell, formatterParams){
-              //   console.log(cell.getValue())
-              //   return cell.getValue() + "%"
-              // }
-            },
-            {
-              title: "Updated",
-              field: "Updated",
-              sorter: "string",
-              align: "left",
-              headerFilter:"input"
-            },
-          ]
-          // rowClick: function(e, id, data, row) { //trigger an alert message when the row is clicked
-          //   alert("Row " + id + " Clicked!!!!");
-          // },
-        });
 
-        $("#" + tagtbl).tabulator("setData", marketData[i].values);
-        document.write("<br>");
-        document.write("<button onClick='send($(this).siblings())' class='w3-button w3-green w3-right w3-padding-12'>Analyse "+marketData[i].key);
-        document.write(" <i class='fa fa-arrow-right' aria-hidden='true'></i></button>");
-        document.write("</div><br>" );
+  <script type="text/javascript">
+  debugger
+  for (var i = 0; i < marketData.length; i++) {
+    if (marketData[i].data.length > 1) {
+      if (marketData[i].data.length > 10) {
+        var valheight = "300px"
+      } else {
+        var valheight = "100%"
+      }
+      var tagtbl = "example-table" + i
+      document.write("<div class='w3-container' w3-padding-16> <h5>Market data for " + marketData[i].pair + "</h5>")
+      // document.write("<p id='card"+ i +"'> Text </p>");
+      document.write("<div id=" + tagtbl + "></div>")
+      //create Tabulator on DOM element with id equivalent to tagtbl
+      $("#" + tagtbl).tabulator({
+        height: valheight, // set height of table (optional)
+        layout: 'fitColumns', // fit columns to width of table (optional)
+        placeholder:"No data available to display this table",
+        initialSort:[
+                    {column:"price_usd", dir:"desc"}, // sort by this first
+                    ],
+        columns: [ // Define Table Columns
+          {
+            title: "No.",
+            field: "No.",
+            formatter:"rownum",
+            sorter: "number",
+            width: 3
+          },
+          {
+            title: "Source",
+            field: "exchange",
+            sorter: "string",
+            align: "left",
+            //formatter:printIcon,
+            bottomCalc: "count",
+            cellClick: function (e, cell) {
+              //e - the click event object
+              //cell - cell component
+              window.open(pair_link);
+              // alert("Printing row data for: " + cell.getRow().getData().name)
+            }
+          },
+          {
+            title: "Volume (24h)",
+            field: "volume_usd",
+            sorter: "number",
+            align:"right",
+            formatter:"money", formatterParams:{symbol:'$'},
+            headerFilter:"number", headerFilterPlaceholder:"at least...", headerFilterFunc:">=",
+            headerFilterParams:{initial:1}
+          },
+          {
+            title: "Price",
+            field: "price_usd",
+            sorter: "number",
+            align:"right",
+            formatter:"money",
+            formatterParams: {symbol:'$'},
+            bottomCalc: diffArray,
+            // bottomCalcFormatter: "money",
+            // bottomCalcFormatterParams:{symbol:'$'},
+            headerFilter:"number", headerFilterPlaceholder:"at least...", headerFilterFunc:">="
+          },
+          {
+            title: "Volume (%)",
+            field: "volume_percent",
+            sorter: "number",
+            align:"right",
+            // bottomCalc:diffArray,
+            formatter:"percentageSymbol"
+          },
+          {
+            title: "Updated",
+            field: "updated",
+            sorter: "string",
+            align: "left",
+            headerFilter:"input"
+          },
+        ]
+        // rowClick: function(e, id, data, row) { //trigger an alert message when the row is clicked
+        //   alert("Row " + id + " Clicked!!!!");
+        // },
+      });
+
+      $("#" + tagtbl).tabulator("setData", marketData[i].data);
+      document.write("<br>");
+      document.write("<button onClick='send($(this).siblings())' class='w3-button w3-green w3-right w3-padding-12'>Analyse "+marketData[i].key);
+      document.write(" <i class='fa fa-arrow-right' aria-hidden='true'></i></button>");
+      document.write("</div><br>" );
         // $("#card"+i) html("Data updated card"+i);
       }
     }
