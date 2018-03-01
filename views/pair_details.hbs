@@ -66,6 +66,7 @@ Tabulator.extendExtension("format", "formatters", {
     }
 });
 
+//Function to generate colours
 function getColours(ammount) {
   var letters = 'ABCDE'.split('');
   var colours = [];
@@ -79,28 +80,66 @@ function getColours(ammount) {
   return colours 
   }
 
+//Function to sort JSON array
+var sort_by = function(field, reverse, primer){
+
+  debugger
+   var key = primer ? 
+       function(x) {return primer(x[field])} : 
+       function(x) {return x[field]};
+
+   reverse = !reverse ? 1 : -1;
+
+   return function (a, b) {
+       return a = key(a), b = key(b), reverse * ((a > b) - (b > a));
+     } 
+}
+
+  function SortByPrice(x,y) {
+      return y.price_usd - x.price_usd; 
+  }
+
 </script>
 
 {{!-- <div id="loader"></div> --}}
 
 <div class="w3-container animate-bottom">
 
-<div class="w3-panel">
-  <div class="w3-container">
+<div class="w3-container">
+  <script>
+        var diff = getMinMax(marketData[0].data, 'price_usd');
+  </script>
+  <div class="w3-quarter">
+      <div class="w3-container w3-teal w3-padding-16">
+        <div class="w3-left"><i class="fa fa-arrows-alt-v w3-xxxlarge"></i></div>
+        <div class="w3-right">
+          <h3>       
+                 <script>
+              document.write((((diff.max-diff.min)/diff.max)*100).toFixed(2) + "%");
+            </script></h3>
+        </div>
+        <div class="w3-clear"></div>
+        <h4>Price difference</h4>
+      </div>
+    </div>
+</div>
+<div class="w3-container">
+  {{!-- <div class="w3-container"> --}}
     <h5>Volume distribution chart</h5>
-    <canvas id="myChart" height="100px"></canvas>
-
+    <canvas id="DoughnutChart" height="100px"></canvas>
     <script>
-      var labels = marketData[0].data.map(function (group) {
+      var dataColours = getColours(marketData[0].data.length)
+      var labels = marketData[0].data.sort(SortByPrice).map(function (group) {
         return group['exchange']
       })
       console.log(labels)
-      var data = marketData[0].data.map(function (group) {
+      var data = marketData[0].data.sort(SortByPrice).map(function (group) {
         return group['volume_usd']
       })
       console.log(data)
 
-      var ctx = document.getElementById("myChart").getContext('2d');
+
+      var ctx = document.getElementById("DoughnutChart").getContext('2d');
       var myChart = new Chart(ctx, {
         type: "doughnut",
         data: {
@@ -108,7 +147,7 @@ function getColours(ammount) {
           datasets: [{
             label: "My First Dataset",
             data: data,
-            backgroundColor: getColours(marketData[0].data.length),
+            backgroundColor: dataColours,
             borderWidth: "10px",
             borderColor: 'gray' 
           }]
@@ -120,12 +159,43 @@ function getColours(ammount) {
             labels: {
               fontColor: "#000"
             }
-
           }
         }
       });
     </script>
-  </div>
+  {{!-- </div> --}}
+</div>
+
+<div class="w3-container">
+  {{!-- <div class="w3-container"> --}}
+    <h5>Price bar chart</h5>
+    <canvas id="PriceChart" height="100px"></canvas>
+    <script>
+      var labels = marketData[0].data.sort(SortByPrice).map(function (group) {
+        return group['exchange']
+      })
+      console.log(labels)
+      var data = marketData[0].data.sort(SortByPrice).map(function (group) {
+        return group['price_usd']
+      })
+      console.log(data)
+
+      var ctx = document.getElementById("PriceChart").getContext('2d');
+      var myChart = new Chart(ctx, {
+        type: "horizontalBar",
+        data: {
+          labels: labels,
+          datasets: [{
+            label: "Price market (USD)",
+            data: data,
+            backgroundColor: dataColours,
+            borderWidth: "1",
+            borderColor: 'gray' 
+          }]
+        }
+      });
+    </script>
+  {{!-- </div> --}}
 </div>
 
 
