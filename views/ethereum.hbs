@@ -15,6 +15,8 @@
   var addOrderBtn = null;
   //load sample data into the table from JSON string
   var marketData = {{{ jsontbl }}}
+  var coin = "{{{ coin }}}"
+  debugger
 
   Array.prototype.max = function() {
     return Math.max.apply(null, this);
@@ -39,7 +41,7 @@ var diffArray = function(values, data, calcParams){
 function getMinMax(array, col) {
   let out = [];
   let colVal = [];
-  debugger;
+  // debugger;
 
   for (let i = 0; i < array.length; i++) {
     out[i] = array[i][col];
@@ -89,7 +91,7 @@ function send(idem){
 <div class="w3-container animate-bottom">
 
   <script type="text/javascript">
-  debugger
+  // debugger
   for (var i = 0; i < marketData.length; i++) {
     if (marketData[i].data.length > 1) {
       if (marketData[i].data.length > 10) {
@@ -174,9 +176,12 @@ function send(idem){
       });
 
       $("#" + tagtbl).tabulator("setData", marketData[i].data);
+
       document.write("<br>");
-      document.write("<button onClick='send($(this).siblings())' class='w3-button w3-green w3-right w3-padding-12'>Analyse "+marketData[i].key);
-      document.write(" <i class='fa fa-arrow-right' aria-hidden='true'></i></button>");
+      // document.write("<button onClick='send($(this).siblings())' class='w3-button w3-green w3-right w3-padding-12'>Analyse "+marketData[i].key);
+      debugger  
+      document.write("<a href=/coin/" + coin + '/' + marketData[i].pair.replace("/","-") + " class='w3-button w3-green w3-right'> Analyse " + marketData[i].pair);
+      document.write(" <i class='fa fa-arrow-right' aria-hidden='true'></i></a>");
       document.write("</div><br>" );
         // $("#card"+i) html("Data updated card"+i);
       }
