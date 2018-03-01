@@ -1,0 +1,233 @@
+<script src="/javascripts/sorttable.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/json2html/1.2.0/json2html.min.js"></script>
+<script type="text/javascript" src="/javascripts/jquery.min.js"></script>
+<script type="text/javascript" src="/javascripts/jquery-ui.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/3.4.0/css/tabulator.min.css" rel="stylesheet">
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tabulator/3.4.0/js/tabulator.min.js"></script>
+<script type="text/javascript" src="/javascripts/jquery.redirect.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+
+
+<script>
+  /* This scrypt section is required to get the id of the table after loaded
+           this way is possible to get the id from the table imported by node.js/request
+        */
+  // List of global variables
+  var parentElementMainTable = null;
+  var addOrderBtn = null;
+  //load sample data into the table from JSON string
+  var marketData = {{{ jsontbl }}}
+  var coin = "{{{ coin }}}"
+  // debugger
+
+  Array.prototype.max = function() {
+    return Math.max.apply(null, this);
+  };
+
+  Array.prototype.min = function() {
+    return Math.min.apply(null, this);
+  };
+
+
+  //count number of users over 18
+var diffArray = function(values, data, calcParams){
+    //values - array of column values
+    //data - all table data
+    //calcParams - params passed from the column defintion object
+    var maxVal = values.max();
+    var minVal = values.min();
+    return (((values.max()-values.min())/values.max())*100).toFixed(2) + "%";
+}
+
+/*Function to calculate max an mininmum of the array*/
+function getMinMax(array, col) {
+  let out = [];
+  let colVal = [];
+  // debugger;
+
+  for (let i = 0; i < array.length; i++) {
+    out[i] = array[i][col];
+  }
+  return { min: Math.min.apply(null, out), max: Math.max.apply(null, out) };
+}
+
+Tabulator.extendExtension("format", "formatters", {
+    bold:function(cell, formatterParams){
+        return "<strong>" + cell.getValue() + "</strong>"; //make the contents of the cell bold
+    },
+    uppercase:function(cell, formatterParams){
+        return cell.getValue().toUpperCase(); //make the contents of the cell uppercase
+    },
+    percentage:function(cell, formatterParams){
+        return (cell.getValue()*100).toFixed(2) + "%";
+    },
+    percentageSymbol:function(cell, formatterParams){
+        return (cell.getValue()).toFixed(2) + "%";
+    }
+});
+
+function getColours(ammount) {
+  var letters = 'ABCDE'.split('');
+  var colours = [];
+  for (var a=0; a < ammount; a++){
+    var color = '#';
+    for (var i=0; i<3; i++ ) {
+        color += letters[Math.floor(Math.random() * letters.length)];
+    }
+    colours.push(color);
+  }
+  return colours 
+  }
+
+</script>
+
+{{!-- <div id="loader"></div> --}}
+
+<div class="w3-container animate-bottom">
+
+<div class="w3-panel">
+  <div class="w3-container">
+    <h5>Volume distribution chart</h5>
+    <canvas id="myChart" height="100px"></canvas>
+
+    <script>
+      var labels = marketData[0].data.map(function (group) {
+        return group['exchange']
+      })
+      console.log(labels)
+      var data = marketData[0].data.map(function (group) {
+        return group['volume_usd']
+      })
+      console.log(data)
+
+      var ctx = document.getElementById("myChart").getContext('2d');
+      var myChart = new Chart(ctx, {
+        type: "doughnut",
+        data: {
+          labels: labels,
+          datasets: [{
+            label: "My First Dataset",
+            data: data,
+            backgroundColor: getColours(marketData[0].data.length),
+            borderWidth: "10px",
+            borderColor: 'gray' 
+          }]
+        },
+        options: {
+          legend: {
+            display: true,
+            position: "right",
+            labels: {
+              fontColor: "#000"
+            }
+
+          }
+        }
+      });
+    </script>
+  </div>
+</div>
+
+
+
+  <script type="text/javascript">
+  // debugger
+  for (var i = 0; i < marketData.length; i++) {
+    if (marketData[i].data.length > 1) {
+      if (marketData[i].data.length > 10) {
+        var valheight = "300px"
+      } else {
+        var valheight = "100%"
+      }
+      var tagtbl = "example-table" + i
+      document.write("<div class='w3-container' w3-padding-16> <h5>Market data for " + marketData[i].pair + "</h5>")
+      // document.write("<p id='card"+ i +"'> Text </p>");
+      document.write("<div id=" + tagtbl + "></div>")
+      //create Tabulator on DOM element with id equivalent to tagtbl
+      $("#" + tagtbl).tabulator({
+        height: valheight, // set height of table (optional)
+        layout: 'fitColumns', // fit columns to width of table (optional)
+        placeholder:"No data available to display this table",
+        initialSort:[
+                    {column:"price_usd", dir:"desc"}, // sort by this first
+                    ],
+        columns: [ // Define Table Columns
+          {
+            title: "No.",
+            field: "No.",
+            formatter:"rownum",
+            sorter: "number",
+            width: 3
+          },
+          {
+            title: "Source",
+            field: "exchange",
+            sorter: "string",
+            align: "left",
+            //formatter:printIcon,
+            bottomCalc: "count",
+            cellClick: function (e, cell) {
+              //e - the click event object
+              //cell - cell component
+              window.open(pair_link);
+              // alert("Printing row data for: " + cell.getRow().getData().name)
+            }
+          },
+          {
+            title: "Volume (24h)",
+            field: "volume_usd",
+            sorter: "number",
+            align:"right",
+            formatter:"money", formatterParams:{symbol:'$'},
+            headerFilter:"number", headerFilterPlaceholder:"at least...", headerFilterFunc:">=",
+            headerFilterParams:{initial:1}
+          },
+          {
+            title: "Price",
+            field: "price_usd",
+            sorter: "number",
+            align:"right",
+            formatter:"money",
+            formatterParams: {symbol:'$'},
+            bottomCalc: diffArray,
+            // bottomCalcFormatter: "money",
+            // bottomCalcFormatterParams:{symbol:'$'},
+            headerFilter:"number", headerFilterPlaceholder:"at least...", headerFilterFunc:">="
+          },
+          {
+            title: "Volume (%)",
+            field: "volume_percent",
+            sorter: "number",
+            align:"right",
+            // bottomCalc:diffArray,
+            formatter:"percentageSymbol"
+          },
+          {
+            title: "Updated",
+            field: "updated",
+            sorter: "string",
+            align: "left",
+            headerFilter:"input"
+          },
+        ]
+        // rowClick: function(e, id, data, row) { //trigger an alert message when the row is clicked
+        //   alert("Row " + id + " Clicked!!!!");
+        // },
+      });
+
+      $("#" + tagtbl).tabulator("setData", marketData[i].data);
+
+      document.write("<br>");
+      // document.write("<button onClick='send($(this).siblings())' class='w3-button w3-green w3-right w3-padding-12'>Analyse "+marketData[i].key);
+      // debugger  
+      //document.write("<a href=/coin/" + coin + '/' + marketData[i].pair.replace("/","-") + " class='w3-button w3-green w3-right'> Analyse " + marketData[i].pair);
+      //document.write(" <i class='fa fa-arrow-right' aria-hidden='true'></i></a>");
+      document.write("</div><br>" );
+        // $("#card"+i) html("Data updated card"+i);
+      }
+    }
+  </script>
+</div>
+
+<br>
+<br>
